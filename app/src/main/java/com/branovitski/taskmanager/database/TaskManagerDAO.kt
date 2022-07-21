@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import com.branovitski.taskmanager.model.Notes
 
+
 @Dao
 interface TaskManagerDAO {
 

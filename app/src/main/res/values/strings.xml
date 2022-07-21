@@ -5,4 +5,7 @@
     <string name="plus">+</string>
     <string name="title">Title</string>
     <string name="note">Note</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="date">Date</string>
 </resources>

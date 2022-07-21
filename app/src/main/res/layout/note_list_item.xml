@@ -10,19 +10,22 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/ripple_effect">
+
         <TextView
             android:id="@+id/title_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
+            android:lines="1"
             android:marqueeRepeatLimit="marquee_forever"
+            android:padding="8dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="@string/title"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:padding="8dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,6 +42,24 @@
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title_textView" />
+
+        <TextView
+            android:id="@+id/date_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:lines="1"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:scrollHorizontally="true"
+            android:text="@string/date"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/note_textView" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
