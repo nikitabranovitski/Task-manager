@@ -3,12 +3,5 @@
 
     <item
         android:id="@+id/delete_note"
-        android:icon="@drawable/ic_delete"
         android:title="@string/delete" />
-
-    <item
-        android:id="@+id/edit_note"
-        android:icon="@drawable/ic_edit"
-        android:title="@string/edit" />
-
 </menu>

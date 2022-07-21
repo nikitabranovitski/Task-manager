@@ -3,7 +3,7 @@ package com.branovitski.taskmanager.ui.allnotes
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.branovitski.taskmanager.model.Notes
+import com.branovitski.taskmanager.model.Note
 import com.branovitski.taskmanager.repository.TaskManagerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,23 +14,25 @@ import javax.inject.Inject
 class AllNotesViewModel @Inject constructor(private val repository: TaskManagerRepository) :
     ViewModel() {
 
-    val notesData = MutableLiveData<List<Notes>>()
+    val notesData = MutableLiveData<List<Note>>()
 
     init {
         getNotesListFromDB()
     }
 
-    fun getNotesListFromDB() {
+    private fun getNotesListFromDB() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                notesData.postValue(repository.getAllNotes())
+                repository.getAllNotes().collect {
+                    notesData.postValue(it)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun deleteNoteFromDB(note: Notes) {
+    fun onDeleteNoteMenuClicked(note: Note) {
         viewModelScope.launch {
             try {
                 repository.deleteNote(note)
@@ -40,8 +42,8 @@ class AllNotesViewModel @Inject constructor(private val repository: TaskManagerR
         }
     }
 
-    fun filterListOfNotes(newText: String?): ArrayList<Notes> {
-        val filteredList = arrayListOf<Notes>()
+    fun setFilteredListOfNotes(newText: String?): ArrayList<Note> {
+        val filteredList = arrayListOf<Note>()
         notesData.value?.forEach { note ->
             if ((note.title.lowercase()
                     .contains(newText!!.lowercase())) || (note.notes.lowercase()

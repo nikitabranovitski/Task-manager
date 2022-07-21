@@ -7,13 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.SearchView
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.branovitski.taskmanager.R
 import com.branovitski.taskmanager.databinding.FragmentAllNotesBinding
-import com.branovitski.taskmanager.model.Notes
 import com.branovitski.taskmanager.ui.newnote.NewNoteFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -53,7 +54,7 @@ class AllNotesFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                notesAdapter?.submitList(viewModel.filterListOfNotes(newText))
+                notesAdapter?.submitList(viewModel.setFilteredListOfNotes(newText))
                 return true
             }
 
@@ -69,11 +70,7 @@ class AllNotesFragment : Fragment() {
                 popupMenu.setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.delete_note -> {
-                            viewModel.deleteNoteFromDB(note)
-                            viewModel.getNotesListFromDB()
-                            true
-                        }
-                        R.id.edit_note -> {
+                            viewModel.onDeleteNoteMenuClicked(note)
                             true
                         }
                         else -> false
@@ -82,8 +79,17 @@ class AllNotesFragment : Fragment() {
                 popupMenu.show()
             }
 
-            onItemClick = { note, position ->
-
+            onItemClick = { note ->
+                val bundle = Bundle()
+                bundle.putString("title", note.title)
+                bundle.putString("note", note.notes)
+                val fragment = NewNoteFragment()
+                fragment.arguments = bundle
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .addToBackStack(null)
+                    .commit()
             }
         }
         binding.notesList.layoutManager =

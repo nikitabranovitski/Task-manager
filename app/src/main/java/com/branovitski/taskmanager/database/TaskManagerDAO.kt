@@ -5,21 +5,21 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import com.branovitski.taskmanager.model.Notes
-
+import com.branovitski.taskmanager.model.Note
+import kotlinx.coroutines.flow.*
 
 @Dao
 interface TaskManagerDAO {
 
     @Insert(onConflict = REPLACE)
-    fun insert(notes: Notes)
+    suspend fun insert(notes: Note)
 
     @Query("SELECT * FROM notes ORDER BY id DESC")
-    fun getAllNotes(): List<Notes>
+    fun getAllNotes(): Flow<List<Note>>
 
     @Query("UPDATE notes SET title = :title, notes = :notes WHERE ID = :id")
-    fun update(id: Int, title: String, notes: String)
+    suspend fun update(id: Int, title: String, notes: String)
 
     @Delete
-    fun delete(notes: Notes)
+    suspend fun delete(notes: Note)
 }
