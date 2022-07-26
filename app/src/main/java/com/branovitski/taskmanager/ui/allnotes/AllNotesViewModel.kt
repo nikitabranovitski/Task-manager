@@ -3,15 +3,20 @@ package com.branovitski.taskmanager.ui.allnotes
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.branovitski.taskmanager.Screens
 import com.branovitski.taskmanager.model.Note
 import com.branovitski.taskmanager.repository.TaskManagerRepository
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AllNotesViewModel @Inject constructor(private val repository: TaskManagerRepository) :
+class AllNotesViewModel @Inject constructor(
+    private val repository: TaskManagerRepository,
+    private val router: Router
+) :
     ViewModel() {
 
     val notesData = MutableLiveData<List<Note>>()
@@ -55,5 +60,9 @@ class AllNotesViewModel @Inject constructor(private val repository: TaskManagerR
             }
         }
         return filteredList
+    }
+
+    fun onOpenNewNoteScreen(note: Note? = null) {
+        router.navigateTo(Screens.NewNote(note))
     }
 }

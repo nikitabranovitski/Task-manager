@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.branovitski.taskmanager.R
 import com.branovitski.taskmanager.databinding.FragmentNewNoteBinding
+import com.branovitski.taskmanager.model.Note
 import com.branovitski.taskmanager.ui.allnotes.AllNotesFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,30 +31,31 @@ class NewNoteFragment : Fragment() {
     @SuppressLint("SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getNoteFromList()
-        binding.createNewNodeButton.setOnClickListener {
-            if (arguments != null) {
-                viewModel.updateNoteInDB(
-                    binding.titleEditText.text.toString(),
-                    binding.noteEditText.text.toString()
-                )
-            } else {
-                viewModel.addNewNoteToDB(
-                    binding.titleEditText.text.toString(),
-                    binding.noteEditText.text.toString()
-                )
+        viewModel.noteData.observe(viewLifecycleOwner) { note ->
+            if (note != null) {
+                binding.titleEditText.setText(note.title)
+                binding.noteEditText.setText(note.notes)
             }
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.container, AllNotesFragment())
-                .commit()
+        }
+
+        binding.createNewNodeButton.setOnClickListener {
+            viewModel.createOrUpdateNote(
+                binding.titleEditText.text.toString().trim(),
+                binding.noteEditText.text.toString().trim()
+            )
         }
     }
 
-    private fun getNoteFromList() {
-        val bundle = arguments
-        if (bundle != null) {
-            binding.titleEditText.setText(bundle.getString("title"))
-            binding.noteEditText.setText(bundle.getString("note"))
+    companion object {
+
+        const val ARG_NOTE = "note"
+
+        fun newInstance(note: Note? = null): NewNoteFragment {
+            return NewNoteFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_NOTE, note)
+                }
+            }
         }
     }
 

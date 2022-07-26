@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.branovitski.taskmanager.R
+import com.branovitski.taskmanager.TaskManagerApp
 import com.branovitski.taskmanager.databinding.FragmentAllNotesBinding
 import com.branovitski.taskmanager.ui.newnote.NewNoteFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,11 +42,7 @@ class AllNotesFragment : Fragment() {
         setupNotesList()
 
         binding.addNewNoteButton.setOnClickListener {
-            requireActivity().supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.container, NewNoteFragment())
-                .addToBackStack(null)
-                .commit()
+            viewModel.onOpenNewNoteScreen()
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -57,7 +54,6 @@ class AllNotesFragment : Fragment() {
                 notesAdapter?.submitList(viewModel.setFilteredListOfNotes(newText))
                 return true
             }
-
         })
     }
 
@@ -79,17 +75,8 @@ class AllNotesFragment : Fragment() {
                 popupMenu.show()
             }
 
-            onItemClick = { note ->
-                val bundle = Bundle()
-                bundle.putString("title", note.title)
-                bundle.putString("note", note.notes)
-                val fragment = NewNoteFragment()
-                fragment.arguments = bundle
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .addToBackStack(null)
-                    .commit()
+            onItemClick = {
+                viewModel.onOpenNewNoteScreen(it)
             }
         }
         binding.notesList.layoutManager =
