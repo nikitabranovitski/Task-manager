@@ -41,7 +41,6 @@ class NewNoteFragment : Fragment() {
 
         binding.createNewNodeButton.setOnClickListener {
             viewModel.createOrUpdateNote(
-
                 binding.titleEditText.text.toString().trim(),
                 binding.noteEditText.text.toString().trim()
             )

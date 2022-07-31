@@ -1,5 +1,6 @@
 package com.branovitski.taskmanager.ui.newnote
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,7 @@ import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -38,7 +40,7 @@ class NewNoteViewModel @Inject constructor(
                     ?: Note(
                         title = title,
                         notes = note,
-                        date = Calendar.getInstance().time.toString()
+                        date = getCurrentDate()
                     )
                 repository.addNote(newNote)
                 router.exit()
@@ -46,5 +48,11 @@ class NewNoteViewModel @Inject constructor(
                 e.printStackTrace()
             }
         }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("dd.MM.yyyy hh:mm aa")
+        return sdf.format(Date())
     }
 }
