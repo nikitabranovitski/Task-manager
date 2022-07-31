@@ -20,6 +20,7 @@ class NewNoteFragment : Fragment() {
 
     private val viewModel by viewModels<NewNoteViewModel>()
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,6 +41,7 @@ class NewNoteFragment : Fragment() {
 
         binding.createNewNodeButton.setOnClickListener {
             viewModel.createOrUpdateNote(
+
                 binding.titleEditText.text.toString().trim(),
                 binding.noteEditText.text.toString().trim()
             )

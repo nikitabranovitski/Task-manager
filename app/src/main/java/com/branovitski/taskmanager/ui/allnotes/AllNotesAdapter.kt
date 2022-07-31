@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.branovitski.taskmanager.databinding.NoteListItemBinding
 import com.branovitski.taskmanager.model.Note
 
-class AllNotesAdapter : ListAdapter<Note, NotesViewHolder>(NotesDiffCallback()) {
+class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(NotesDiffCallback()) {
 
     lateinit var onItemClick: (note: Note) -> Unit
     lateinit var onItemLongClick: (note: Note, position: Int) -> Unit
@@ -21,26 +21,29 @@ class AllNotesAdapter : ListAdapter<Note, NotesViewHolder>(NotesDiffCallback()) 
 
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
         holder.bind(getItem(position))
-        holder.itemView.setOnClickListener {
-            onItemClick(getItem(position))
+    }
+
+   inner class NotesViewHolder(private val binding: NoteListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            itemView.setOnClickListener {
+                onItemClick(getItem(adapterPosition))
+            }
+
+            itemView.setOnLongClickListener {
+                onItemLongClick(getItem(adapterPosition), adapterPosition)
+                return@setOnLongClickListener true
+            }
         }
 
-        holder.itemView.setOnLongClickListener {
-            onItemLongClick(getItem(position), position)
-            return@setOnLongClickListener true
+        fun bind(item: Note) {
+            binding.titleTextView.text = item.title
+            binding.noteTextView.text = item.notes
+            binding.dateTextView.text = item.date
         }
     }
 
-}
-
-class NotesViewHolder(private val binding: NoteListItemBinding) :
-    RecyclerView.ViewHolder(binding.root) {
-
-    fun bind(item: Note) {
-        binding.titleTextView.text = item.title
-        binding.noteTextView.text = item.notes
-        binding.dateTextView.text = item.date
-    }
 }
 
 private class NotesDiffCallback : DiffUtil.ItemCallback<Note>() {
