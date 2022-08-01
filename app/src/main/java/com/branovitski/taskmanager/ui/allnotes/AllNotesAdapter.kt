@@ -11,6 +11,9 @@ import com.branovitski.taskmanager.model.Note
 import io.karn.notify.entities.Payload
 import kotlin.collections.List as List
 
+private const val ARG_TITLE = "arg.title"
+private const val ARG_NOTE = "arg.note"
+
 class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(NotesDiffCallback()) {
 
     lateinit var onItemClick: (note: Note) -> Unit
@@ -23,8 +26,22 @@ class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(Notes
     }
 
     override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        onBindViewHolder(holder, position, emptyList())
     }
+
+    override fun onBindViewHolder(
+        holder: NotesViewHolder,
+        position: Int,
+        payloads: List<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            holder.bind(getItem(position))
+        } else {
+            val bundle = payloads[0] as Bundle
+            holder.update(bundle)
+        }
+    }
+
 
     inner class NotesViewHolder(private val binding: NoteListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -40,6 +57,14 @@ class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(Notes
             }
         }
 
+        fun update(bundle: Bundle) {
+            if (bundle.containsKey(ARG_NOTE)) {
+                binding.noteTextView.text = bundle.getString(ARG_NOTE)
+            }
+            if (bundle.containsKey(ARG_TITLE)) {
+                binding.titleTextView.text = bundle.getString(ARG_TITLE)
+            }
+        }
 
         fun bind(item: Note) {
             binding.titleTextView.text = item.title
@@ -55,4 +80,15 @@ private class NotesDiffCallback : DiffUtil.ItemCallback<Note>() {
     override fun areItemsTheSame(oldItem: Note, newItem: Note) = oldItem.id == newItem.id
 
     override fun areContentsTheSame(oldItem: Note, newItem: Note) = oldItem == newItem
+
+    override fun getChangePayload(oldItem: Note, newItem: Note): Any {
+        val diff = Bundle()
+        if (oldItem.title != newItem.title) {
+            diff.putString(ARG_TITLE, newItem.title)
+        }
+        if (oldItem.notes != newItem.notes) {
+            diff.putString(ARG_NOTE, newItem.notes)
+        }
+        return diff
+    }
 }
