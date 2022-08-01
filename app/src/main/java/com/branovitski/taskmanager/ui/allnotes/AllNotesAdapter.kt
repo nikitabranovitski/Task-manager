@@ -1,5 +1,6 @@
 package com.branovitski.taskmanager.ui.allnotes
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -7,6 +8,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.branovitski.taskmanager.databinding.NoteListItemBinding
 import com.branovitski.taskmanager.model.Note
+import io.karn.notify.entities.Payload
+import kotlin.collections.List as List
 
 class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(NotesDiffCallback()) {
 
@@ -23,7 +26,7 @@ class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(Notes
         holder.bind(getItem(position))
     }
 
-   inner class NotesViewHolder(private val binding: NoteListItemBinding) :
+    inner class NotesViewHolder(private val binding: NoteListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
@@ -36,6 +39,7 @@ class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(Notes
                 return@setOnLongClickListener true
             }
         }
+
 
         fun bind(item: Note) {
             binding.titleTextView.text = item.title
