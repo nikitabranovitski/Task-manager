@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.branovitski.taskmanager.databinding.NoteListItemBinding
@@ -17,7 +18,6 @@ private const val ARG_NOTE = "arg.note"
 class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(NotesDiffCallback()) {
 
     lateinit var onItemClick: (note: Note) -> Unit
-    lateinit var onItemLongClick: (note: Note, position: Int) -> Unit
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -49,11 +49,6 @@ class AllNotesAdapter : ListAdapter<Note, AllNotesAdapter.NotesViewHolder>(Notes
         init {
             itemView.setOnClickListener {
                 onItemClick(getItem(adapterPosition))
-            }
-
-            itemView.setOnLongClickListener {
-                onItemLongClick(getItem(adapterPosition), adapterPosition)
-                return@setOnLongClickListener true
             }
         }
 
@@ -92,3 +87,21 @@ private class NotesDiffCallback : DiffUtil.ItemCallback<Note>() {
         return diff
     }
 }
+
+abstract class SwipeToDeleteCallBack :
+    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+       return false
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        TODO("Not yet implemented")
+    }
+
+}
+
+

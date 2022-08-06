@@ -12,13 +12,14 @@ import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.branovitski.taskmanager.R
 import com.branovitski.taskmanager.TaskManagerApp
 import com.branovitski.taskmanager.databinding.FragmentAllNotesBinding
 import com.branovitski.taskmanager.ui.newnote.NewNoteFragment
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class AllNotesFragment : Fragment() {
@@ -59,22 +60,15 @@ class AllNotesFragment : Fragment() {
 
     @SuppressLint("ResourceType", "NotifyDataSetChanged")
     private fun setupNotesList() {
-        notesAdapter = AllNotesAdapter().apply {
-            onItemLongClick = { note, position ->
-                val popupMenu = PopupMenu(requireContext(), binding.notesList[position])
-                popupMenu.menuInflater.inflate(R.menu.note_option, popupMenu.menu)
-                popupMenu.setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.delete_note -> {
-                            viewModel.onDeleteNoteMenuClicked(note)
-                            true
-                        }
-                        else -> false
-                    }
-                }
-                popupMenu.show()
+        val swipeGesture = object : SwipeToDeleteCallBack() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                viewModel.onDeleteNoteMenuClicked(viewModel.notesData.value!![viewHolder.adapterPosition])
             }
+        }
+        val touchHelper = ItemTouchHelper(swipeGesture)
+        touchHelper.attachToRecyclerView(binding.notesList)
 
+        notesAdapter = AllNotesAdapter().apply {
             onItemClick = {
                 viewModel.onOpenNewNoteScreen(it)
             }
