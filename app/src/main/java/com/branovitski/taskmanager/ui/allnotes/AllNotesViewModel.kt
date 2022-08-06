@@ -20,6 +20,8 @@ class AllNotesViewModel @Inject constructor(
     ViewModel() {
 
     val notesData = MutableLiveData<List<Note>>()
+    lateinit var showToast: () -> Unit
+    lateinit var showErrorToast: () -> Unit
 
     init {
         getNotesListFromDB()
@@ -32,7 +34,7 @@ class AllNotesViewModel @Inject constructor(
                     notesData.postValue(it)
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                showErrorToast()
             }
         }
     }
@@ -41,8 +43,9 @@ class AllNotesViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.deleteNote(note)
+                showToast()
             } catch (e: Exception) {
-                e.printStackTrace()
+                showErrorToast()
             }
         }
     }

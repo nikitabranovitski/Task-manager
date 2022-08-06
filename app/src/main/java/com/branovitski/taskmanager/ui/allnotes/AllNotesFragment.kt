@@ -1,12 +1,14 @@
 package com.branovitski.taskmanager.ui.allnotes
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.core.view.get
@@ -28,6 +30,7 @@ class AllNotesFragment : Fragment() {
 
     private val viewModel by viewModels<AllNotesViewModel>()
 
+
     private var notesAdapter: AllNotesAdapter? = null
 
     override fun onCreateView(
@@ -38,8 +41,21 @@ class AllNotesFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.apply {
+            showToast = {
+                makeToast("This note has been successfully deleted!")
+            }
+            showErrorToast = {
+                makeToast("Error")
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupNotesList()
 
         binding.addNewNoteButton.setOnClickListener {
@@ -80,6 +96,14 @@ class AllNotesFragment : Fragment() {
         viewModel.notesData.observe(viewLifecycleOwner) {
             notesAdapter?.submitList(it)
         }
+    }
+
+    private fun makeToast(text: String) {
+        Toast.makeText(
+            requireContext(),
+            text,
+            Toast.LENGTH_LONG
+        ).show()
     }
 
 }
